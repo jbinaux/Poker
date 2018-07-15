@@ -45,10 +45,35 @@ public class PokerClassique {
 		return mixedDeck;
 	}
 	
+	public static ArrayList<ArrayList<String>> createPlayers(int nbPlayers)
+	{
+		ArrayList<ArrayList<String>> players = new ArrayList<ArrayList<String>>();
+		for(int i = 0; i < nbPlayers; i++)
+		{
+			ArrayList<String> cards = new ArrayList<String>();
+			players.add(cards);
+		}
+		return players;
+	}
+	
+	public static ArrayList<ArrayList<String>> dealCards(ArrayList<String> deck, ArrayList<ArrayList<String>>players)
+	{
+		for(int i = 0; i < 5; i++)
+		{
+			for(int j = 0; j < players.size(); j++)
+			{
+				players.get(j).add(deck.get( ((i+1) * (j+1) -1)));
+			}
+		}
+		return players;
+	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ArrayList<String> deck = mixCards(createCards());
-		System.out.println(deck);
+		ArrayList<ArrayList<String>> players = createPlayers(6);
+		players = dealCards(deck, players);
+		System.out.println(players.get(0));
 	}
 
 }
