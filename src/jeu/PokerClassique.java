@@ -80,6 +80,34 @@ public class PokerClassique {
 		return cardValue;
 	}
 
+	public static ArrayList<String> sortHand(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	{
+		ArrayList<String> tmp = new ArrayList<String>();
+		tmp.add("0");
+		int i = 0;
+		while(i < hand.size()-1)
+		{
+			//si la carte suivente et superieure selon le hashmap, elles sont interverties
+			if(cardValue.get(hand.get(i).charAt(0)) < cardValue.get(hand.get(i+1).charAt(0)))
+			{
+				tmp.set(0, hand.get(i));
+				hand.set(i, hand.get(i + 1));
+				hand.set(i + 1, tmp.get(0));
+				//revient en arriere 
+				if(i>0)
+				{
+					i--;
+				}
+			}
+			else
+			{
+				i++;
+			}
+		}
+		
+		return hand;
+	}
+	
 	public static boolean isCouleur(ArrayList<String> hand)
 	{
 		ArrayList<String> colors = new ArrayList<String>();
@@ -94,10 +122,8 @@ public class PokerClassique {
 			//cycle dans les couleurs
 			for(int j = 0; j < 5; j++)
 			{
-				//cycle dans la main
 				if(hand.get(j).contains(colors.get(i)))
 				{
-					//ajoute 1 au nombre de carte de la meme couleur
 					nbCouleur++;
 				}
 				else
@@ -124,12 +150,12 @@ public class PokerClassique {
 		
 		
 		ArrayList<String> test = new ArrayList<String>();
-		test.add("kajhf carreau");
-		test.add("kajhf carreau");
-		test.add("kajhf carreau");
-		test.add("kajhf carreau");
-		test.add("kajhf carreau");
-		System.out.println(isCouleur(test));
+		test.add("5 carreau");
+		test.add("10 carreau");
+		test.add("Valet carreau");
+		test.add("2 carreau");
+		test.add("3 carreau");
+		System.out.println(sortHand(test, cardValue));
 	}
 
 }
