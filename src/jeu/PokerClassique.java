@@ -1,6 +1,7 @@
 package jeu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PokerClassique {
 
@@ -27,7 +28,7 @@ public class PokerClassique {
 		return deck;
 	}
 	
-	public static ArrayList<String> mixCards(ArrayList<String> deck){
+	public static ArrayList<String> shuffleCards(ArrayList<String> deck){
 		ArrayList<String> mixedDeck = new ArrayList<String>();
 		for(int i = 0; i <= 51; i++)
 		{
@@ -67,13 +68,68 @@ public class PokerClassique {
 		}
 		return players;
 	}
+
+	public static HashMap<Character, Integer> createHash(ArrayList<String> deck)
+	{
+		HashMap<Character, Integer> cardValue = new HashMap<Character, Integer>();
+		
+		for(int i = 1; i<=13; i++)
+		{
+			cardValue.put(deck.get(i - 1).charAt(0), i);
+		}
+		return cardValue;
+	}
+
+	public static boolean isCouleur(ArrayList<String> hand)
+	{
+		ArrayList<String> colors = new ArrayList<String>();
+		int nbCouleur = 0;
+		
+		colors.add("coeur");
+		colors.add("pique");
+		colors.add("carreau");
+		colors.add("trefle");
+		for(int i = 0; i < 4;i++)
+		{
+			//cycle dans les couleurs
+			for(int j = 0; j < 5; j++)
+			{
+				//cycle dans la main
+				if(hand.get(j).contains(colors.get(i)))
+				{
+					//ajoute 1 au nombre de carte de la meme couleur
+					nbCouleur++;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if(nbCouleur == 5)
+			{
+				return true;
+			}
+			nbCouleur = 0;
+		}
+		return false;
+	}
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		ArrayList<String> deck = mixCards(createCards());
+		ArrayList<String> deck = createCards();
+		HashMap<Character, Integer> cardValue = createHash(deck);
+		deck = shuffleCards(deck);
+		//TODO scanner le nombre de joueurs
 		ArrayList<ArrayList<String>> players = createPlayers(6);
 		players = dealCards(deck, players);
-		System.out.println(players.get(0));
+		
+		
+		ArrayList<String> test = new ArrayList<String>();
+		test.add("kajhf carreau");
+		test.add("kajhf carreau");
+		test.add("kajhf carreau");
+		test.add("kajhf carreau");
+		test.add("kajhf carreau");
+		System.out.println(isCouleur(test));
 	}
 
 }
