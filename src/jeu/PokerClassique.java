@@ -171,6 +171,15 @@ public class PokerClassique {
 		}
 	}
 	
+	public static boolean isQuinteFlush(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	{
+		if(isCouleur(hand) && isSuite(hand, cardValue))
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	public static void main(String[] args) {
 		ArrayList<String> deck = createCards();
 		HashMap<Character, Integer> cardValue = createHash(deck);
@@ -187,7 +196,7 @@ public class PokerClassique {
 		test.add("2 carreau");
 		test.add("3 carreau");
 		test = sortHand(test, cardValue);
-		System.out.println(isSuite(test, cardValue));
+		System.out.println(isQuinteFlush(test, cardValue));
 		System.out.println(test);
 	}
 
