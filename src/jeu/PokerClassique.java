@@ -36,9 +36,11 @@ public class PokerClassique {
 		}
 		for(int j = 0; j <= 51; j++)
 		{
+			//randomise la position dans la nouvelle List
 			int rand = (int) (Math.random()*52);
 			while(mixedDeck.get(rand) != "0")
 			{
+				//si la valeur a la position donnee est differente de 0, on choisi une nouvelle position aleatoire
 				rand = (int) (Math.random() * 52);
 			}
 			mixedDeck.set(rand, deck.get(j));
@@ -51,6 +53,7 @@ public class PokerClassique {
 		ArrayList<ArrayList<String>> players = new ArrayList<ArrayList<String>>();
 		for(int i = 0; i < nbPlayers; i++)
 		{
+			//ajoute une ArrayList<String> vide pour chaque joueur
 			ArrayList<String> cards = new ArrayList<String>();
 			players.add(cards);
 		}
@@ -61,8 +64,10 @@ public class PokerClassique {
 	{
 		for(int i = 0; i < 5; i++)
 		{
+			//cycle 5 fois
 			for(int j = 0; j < players.size(); j++)
 			{
+				//donne une carte a chaque joueur;
 				players.get(j).add(deck.get( ((i+1) * (j+1) -1)));
 			}
 		}
@@ -71,6 +76,7 @@ public class PokerClassique {
 
 	public static HashMap<Character, Integer> createHash(ArrayList<String> deck)
 	{
+		//utilise les treize premiere cartes du jeu cree pour faire un hashmap de la valeur des cartes
 		HashMap<Character, Integer> cardValue = new HashMap<Character, Integer>();
 		
 		for(int i = 1; i<=13; i++)
@@ -87,7 +93,7 @@ public class PokerClassique {
 		int i = 0;
 		while(i < hand.size()-1)
 		{
-			//si la carte suivente et superieure selon le hashmap, elles sont interverties
+			//si la carte suivante et superieure selon le hashmap, elles sont interverties
 			if(cardValue.get(hand.get(i).charAt(0)) < cardValue.get(hand.get(i+1).charAt(0)))
 			{
 				tmp.set(0, hand.get(i));
@@ -122,6 +128,7 @@ public class PokerClassique {
 			//cycle dans les couleurs
 			for(int j = 0; j < 5; j++)
 			{
+				//cycle dans les cartes du joueur
 				if(hand.get(j).contains(colors.get(i)))
 				{
 					nbCouleur++;
@@ -140,6 +147,30 @@ public class PokerClassique {
 		return false;
 	}
 	
+	public static boolean isSuite(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	{
+		int nbSuite = 0; 
+		for(int i = 0; i < hand.size() - 1; i++)
+		{
+			if(cardValue.get(hand.get(i).charAt(0)) == (cardValue.get(hand.get(i + 1).charAt(0)) + 1) )
+			{
+				nbSuite++;
+			}
+			else
+			{
+				break;
+			}
+		}
+		if(nbSuite == 4)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	public static void main(String[] args) {
 		ArrayList<String> deck = createCards();
 		HashMap<Character, Integer> cardValue = createHash(deck);
@@ -151,11 +182,13 @@ public class PokerClassique {
 		
 		ArrayList<String> test = new ArrayList<String>();
 		test.add("5 carreau");
-		test.add("10 carreau");
-		test.add("Valet carreau");
+		test.add("6 carreau");
+		test.add("4 carreau");
 		test.add("2 carreau");
 		test.add("3 carreau");
-		System.out.println(sortHand(test, cardValue));
+		test = sortHand(test, cardValue);
+		System.out.println(isSuite(test, cardValue));
+		System.out.println(test);
 	}
 
 }
