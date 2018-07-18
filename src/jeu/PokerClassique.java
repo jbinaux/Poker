@@ -152,6 +152,7 @@ public class PokerClassique {
 		int nbSuite = 0; 
 		for(int i = 0; i < hand.size() - 1; i++)
 		{
+			//si la valeur de la carte suivante +1 est egal a la valeur actuelle, alors elle la suit
 			if(cardValue.get(hand.get(i).charAt(0)) == (cardValue.get(hand.get(i + 1).charAt(0)) + 1) )
 			{
 				nbSuite++;
@@ -180,6 +181,35 @@ public class PokerClassique {
 		return false;
 	}
 	
+	public static int nbSameCards(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	{
+		int nbSame = 0;
+		int max = 0;
+		int card = 0;
+		//compare chaque carte a toutes les cartes, y compris elle meme
+		for(int i = 0; i < hand.size(); i++)
+		{
+			card = cardValue.get(hand.get(i).charAt(0));
+			for(int j = 0; j < hand.size(); j++)
+			{
+				if(card == cardValue.get(hand.get(j).charAt(0)))
+				{
+					//si la valeur des cartes sont egales, incremente le compteur
+					nbSame++;
+				}
+				if(max < nbSame)
+				{
+					//prend le maximum de cartes identiques
+					max = nbSame;
+				}
+			}
+			//remet a zero le compteur apres chaque carte testee
+			nbSame = 0;
+		}
+		
+		return max;
+	}
+	
 	public static void main(String[] args) {
 		ArrayList<String> deck = createCards();
 		HashMap<Character, Integer> cardValue = createHash(deck);
@@ -190,13 +220,13 @@ public class PokerClassique {
 		
 		
 		ArrayList<String> test = new ArrayList<String>();
-		test.add("5 carreau");
 		test.add("6 carreau");
-		test.add("4 carreau");
 		test.add("2 carreau");
-		test.add("3 carreau");
+		test.add("2 carreau");
+		test.add("6 carreau");
+		test.add("6 carreau");
 		test = sortHand(test, cardValue);
-		System.out.println(isQuinteFlush(test, cardValue));
+		System.out.println(nbSameCards(test, cardValue));
 		System.out.println(test);
 	}
 
