@@ -16,6 +16,7 @@ public class PokerClassique {
 		colors.add(" trefle");
 		for(int j = 0; j <= 3; j++)
 		{
+			//pour chaque couleur, ajoute une valeur de 2 a As
 			for(int i = 2; i <= 10; i++)
 			{
 				deck.add(i + colors.get(j));
@@ -76,7 +77,9 @@ public class PokerClassique {
 
 	public static HashMap<Character, Integer> createHash(ArrayList<String> deck)
 	{
-		//utilise les treize premiere cartes du jeu cree pour faire un hashmap de la valeur des cartes
+		/* utilise les treize premiere cartes du jeu cree pour faire un hashmap qui associe la premiere lettre de la carte 
+		 * a une valeur de 1 a 13
+		 */
 		HashMap<Character, Integer> cardValue = new HashMap<Character, Integer>();
 		
 		for(int i = 1; i<=13; i++)
@@ -186,9 +189,10 @@ public class PokerClassique {
 		int nbSame = 0;
 		int max = 0;
 		int card = 0;
-		//compare chaque carte a toutes les cartes, y compris elle meme
+		
 		for(int i = 0; i < hand.size(); i++)
 		{
+			//compare chaque carte a toutes les cartes, y compris elle meme
 			card = cardValue.get(hand.get(i).charAt(0));
 			for(int j = 0; j < hand.size(); j++)
 			{
@@ -210,6 +214,45 @@ public class PokerClassique {
 		return max;
 	}
 	
+	public static boolean isFull(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	{
+		ArrayList<String> tmp = new ArrayList<String>();
+		tmp = (ArrayList<String>)hand.clone();
+		int card;
+		int nbSame = 0;
+		for(int i = 0; i < tmp.size(); i++)
+		{
+			card = cardValue.get(tmp.get(i).charAt(0));
+			for(int j = 0; j < tmp.size(); j++)
+			{
+				if(card == cardValue.get(tmp.get(j).charAt(0)))
+				{
+					nbSame++;
+				}
+				if(nbSame == 3)
+				{
+					//si il y a trois cartes de meme valeur, on retire toutes les instances de cette valeur
+					for(int k = 0; k < tmp.size(); k++)
+					{
+						if(card == cardValue.get(tmp.get(k).charAt(0)))
+						{
+							tmp.remove(k);
+							//pour remettre k a zero apres l'incrementation du for
+							k = -1;
+						}
+					}
+				}
+			}
+			nbSame = 0;
+		}
+		if(tmp.size() == 2 && cardValue.get(tmp.get(0).charAt(0)) == cardValue.get(tmp.get(1).charAt(0)))
+		{
+			//si les deux cartes restante on la meme valeur
+			return true;
+		}
+		return false;
+	}
+	
 	public static void main(String[] args) {
 		ArrayList<String> deck = createCards();
 		HashMap<Character, Integer> cardValue = createHash(deck);
@@ -220,13 +263,13 @@ public class PokerClassique {
 		
 		
 		ArrayList<String> test = new ArrayList<String>();
-		test.add("6 carreau");
-		test.add("2 carreau");
-		test.add("2 carreau");
-		test.add("6 carreau");
+		test.add("9 carreau");
+		test.add("9 carreau");
+		test.add("9 carreau");
+		test.add("9 carreau");
 		test.add("6 carreau");
 		test = sortHand(test, cardValue);
-		System.out.println(nbSameCards(test, cardValue));
+		System.out.println(isFull(test, cardValue));
 		System.out.println(test);
 	}
 
