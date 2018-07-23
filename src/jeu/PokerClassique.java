@@ -69,7 +69,7 @@ public class PokerClassique {
 			for(int j = 0; j < players.size(); j++)
 			{
 				//donne une carte a chaque joueur;
-				players.get(j).add(deck.get( ((i+1) * (j+1) -1)));
+				players.get(j).add(deck.get( ((i * players.size()) + j)));
 			}
 		}
 		return players;
@@ -89,7 +89,7 @@ public class PokerClassique {
 		return cardValue;
 	}
 
-	public static ArrayList<String> sortHand(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	public static void sortHand(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
 	{
 		ArrayList<String> tmp = new ArrayList<String>();
 		tmp.add("0");
@@ -113,8 +113,6 @@ public class PokerClassique {
 				i++;
 			}
 		}
-		
-		return hand;
 	}
 	
 	public static boolean isCouleur(ArrayList<String> hand)
@@ -134,10 +132,12 @@ public class PokerClassique {
 				//cycle dans les cartes du joueur
 				if(hand.get(j).contains(colors.get(i)))
 				{
+					//Si la carte est de la bonne couleur, on incremente
 					nbCouleur++;
 				}
 				else
 				{
+					
 					break;
 				}
 			}
@@ -145,6 +145,7 @@ public class PokerClassique {
 			{
 				return true;
 			}
+			//reset
 			nbCouleur = 0;
 		}
 		return false;
@@ -222,9 +223,11 @@ public class PokerClassique {
 		int nbSame = 0;
 		for(int i = 0; i < tmp.size(); i++)
 		{
+			//compare chaque carte a toutes les cartes, y compris elle meme
 			card = cardValue.get(tmp.get(i).charAt(0));
 			for(int j = 0; j < tmp.size(); j++)
 			{
+				//si la valeur des cartes sont egales, incremente le compteur
 				if(card == cardValue.get(tmp.get(j).charAt(0)))
 				{
 					nbSame++;
@@ -253,6 +256,87 @@ public class PokerClassique {
 		return false;
 	}
 	
+	public static boolean isDoublePair(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	{
+		int nbSame = 0;
+		int card = 0;
+		int nbPair = 0;
+		
+		for(int i = 0; i < hand.size(); i++)
+		{
+			//compare chaque carte a toutes les cartes, y compris elle meme
+			card = cardValue.get(hand.get(i).charAt(0));
+			for(int j = 0; j < hand.size(); j++)
+			{
+				if(card == cardValue.get(hand.get(j).charAt(0)))
+				{
+					//si la valeur des cartes sont egales, incremente le compteur
+					nbSame++;
+				}
+				if(nbSame == 2 && card == cardValue.get(hand.get(j).charAt(0)))
+				{
+					//les paires sont compte quand il y a deux carte similaire
+					nbPair++;
+				}
+				if(nbSame > 2)
+				{
+					nbPair--;
+				}
+			}
+			//remet a zero le compteur apres chaque carte testee
+			nbSame = 0;
+		}
+		//comme chaque paire est compte deux fois, retourne true quand nbPair = 4
+		if(nbPair == 4)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public static String bestCombination(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	{
+		if(isQuinteFlush(hand, cardValue))
+		{
+			return ("Quinte Flush");
+		}
+		else if(4 == nbSameCards(hand, cardValue))
+		{
+			return ("Carre");
+		}
+		else if(isFull(hand, cardValue))
+		{
+			return ("Full");
+		}
+		else if(isCouleur(hand))
+		{
+			return ("Couleur");
+		}
+		else if(isSuite(hand, cardValue))
+		{
+			return ("Suite");
+		}
+		else if(3 == nbSameCards(hand, cardValue))
+		{
+			return ("Brelan");
+		}
+		else if(isDoublePair(hand, cardValue))
+		{
+			return ("Double Paire");
+		}
+		else if(2 == nbSameCards(hand, cardValue))
+		{
+			return ("Paire");
+		}
+		else
+		{
+			return hand.get(0);
+		}
+	}
+	
 	public static void main(String[] args) {
 		ArrayList<String> deck = createCards();
 		HashMap<Character, Integer> cardValue = createHash(deck);
@@ -260,17 +344,16 @@ public class PokerClassique {
 		//TODO scanner le nombre de joueurs
 		ArrayList<ArrayList<String>> players = createPlayers(6);
 		players = dealCards(deck, players);
+		ArrayList<String> combinations = new ArrayList<String>();
 		
-		
-		ArrayList<String> test = new ArrayList<String>();
-		test.add("9 carreau");
-		test.add("9 carreau");
-		test.add("9 carreau");
-		test.add("9 carreau");
-		test.add("6 carreau");
-		test = sortHand(test, cardValue);
-		System.out.println(isFull(test, cardValue));
-		System.out.println(test);
+		for (int i = 0; i < players.size(); i++)
+		{
+			sortHand(players.get(i), cardValue);
+			combinations.add(bestCombination(players.get(i), cardValue));
+		}
+		System.out.println(deck);
+		System.out.println(players);
+		System.out.println(combinations);
 	}
 
 }
