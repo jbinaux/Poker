@@ -61,7 +61,7 @@ public class PokerClassique {
 		return players;
 	}
 	
-	public static ArrayList<ArrayList<String>> dealCards(ArrayList<String> deck, ArrayList<ArrayList<String>>players)
+	public static void dealCards(ArrayList<String> deck, ArrayList<ArrayList<String>>players)
 	{
 		for(int i = 0; i < 5; i++)
 		{
@@ -72,7 +72,6 @@ public class PokerClassique {
 				players.get(j).add(deck.get( ((i * players.size()) + j)));
 			}
 		}
-		return players;
 	}
 
 	public static HashMap<Character, Integer> createHash(ArrayList<String> deck)
@@ -126,7 +125,7 @@ public class PokerClassique {
 		colors.add("trefle");
 		for(int i = 0; i < 4;i++)
 		{
-			//cycle dans les couleurs
+			//cycle dans les couleurs (coeur, puis pique etc ...)
 			for(int j = 0; j < 5; j++)
 			{
 				//cycle dans les cartes du joueur
@@ -137,7 +136,6 @@ public class PokerClassique {
 				}
 				else
 				{
-					
 					break;
 				}
 			}
@@ -297,63 +295,101 @@ public class PokerClassique {
 		}
 	}
 	
-	public static String bestCombination(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	public static String cardPair(ArrayList<String> hand, HashMap<Character, Integer> cardValue)
+	{
+		int nbSame = 0;
+		int testedCardValue = 0;
+		
+		for(int i = 0; i < hand.size(); i++)
+		{
+			//compare chaque carte a toutes les cartes, y compris elle meme
+			testedCardValue = cardValue.get(hand.get(i).charAt(0));
+			for(int j = 0; j < hand.size(); j++)
+			{
+				if(testedCardValue == cardValue.get(hand.get(j).charAt(0)))
+				{
+					//si la valeur des cartes sont egales, incremente le compteur
+					nbSame++;
+				}
+				if(nbSame == 2 && testedCardValue == cardValue.get(hand.get(j).charAt(0)))
+				{
+					//si on trouve deux cartes similaires, et comme les cartes sont triee, les premiere sont les plus fortes
+					return hand.get(j);
+				}
+			}
+			//remet a zero le compteur apres chaque carte testee
+			nbSame = 0;
+		}
+		return "0";
+	}
+	
+	public static String bestCombination(ArrayList<String> hand, HashMap<Character, Integer> cardValue, ArrayList<String> combinationCard)
 	{
 		if(isQuinteFlush(hand, cardValue))
 		{
+			combinationCard.add(hand.get(0));
 			return ("Quinte Flush");
 		}
 		else if(4 == nbSameCards(hand, cardValue))
 		{
+			combinationCard.add(hand.get(2));
 			return ("Carre");
 		}
 		else if(isFull(hand, cardValue))
 		{
+			combinationCard.add(hand.get(2));
 			return ("Full");
 		}
 		else if(isCouleur(hand))
 		{
+			combinationCard.add(hand.get(0));
 			return ("Couleur");
 		}
 		else if(isSuite(hand, cardValue))
 		{
+			combinationCard.add(hand.get(0));
 			return ("Suite");
 		}
 		else if(3 == nbSameCards(hand, cardValue))
 		{
+			combinationCard.add(hand.get(2));
 			return ("Brelan");
 		}
 		else if(isDoublePair(hand, cardValue))
 		{
+			combinationCard.add(cardPair(hand, cardValue));
 			return ("Double Paire");
 		}
 		else if(2 == nbSameCards(hand, cardValue))
 		{
+			combinationCard.add(cardPair(hand, cardValue));
 			return ("Paire");
 		}
 		else
 		{
+			combinationCard.add(hand.get(0));
 			return hand.get(0);
 		}
 	}
 	
 	public static void main(String[] args) {
 		ArrayList<String> deck = createCards();
+		ArrayList<String> combinationCard = new ArrayList<String>();
 		HashMap<Character, Integer> cardValue = createHash(deck);
 		deck = shuffleCards(deck);
 		//TODO scanner le nombre de joueurs
 		ArrayList<ArrayList<String>> players = createPlayers(6);
-		players = dealCards(deck, players);
+		dealCards(deck, players);
 		ArrayList<String> combinations = new ArrayList<String>();
 		
 		for (int i = 0; i < players.size(); i++)
 		{
 			sortHand(players.get(i), cardValue);
-			combinations.add(bestCombination(players.get(i), cardValue));
+			combinations.add(bestCombination(players.get(i), cardValue, combinationCard));
 		}
-		System.out.println(deck);
 		System.out.println(players);
 		System.out.println(combinations);
+		System.out.println(combinationCard);
 	}
 
 }
