@@ -326,6 +326,7 @@ public class PokerClassique {
 	
 	public static String handCombination(ArrayList<String> hand, HashMap<Character, Integer> cardValue, ArrayList<String> combinationCard, ArrayList<Integer> combinationsValue)
 	{
+		//de la meilleur combination a la plus faible, donne la carte de la combination, et sa valeur
 		if(isQuinteFlush(hand, cardValue))
 		{
 			combinationCard.add(hand.get(0));
@@ -382,16 +383,43 @@ public class PokerClassique {
 		}
 	}
 	
+	public static int bestCombination(HashMap<Character, Integer> cardValue, ArrayList<String> combinations, ArrayList<Integer> combinationsValue, ArrayList<String> combinationCard)
+	{
+		//stocke l'index de la meilleure combination
+		int indexBestCombination = 0;
+		
+		for(int i = 0; i < combinations.size(); i++)
+		{
+			if(combinationsValue.get(indexBestCombination) < combinationsValue.get(i))
+			{
+				//si la combination est meilleure, on garde l' index
+				indexBestCombination = i;
+			}
+			else if(combinationsValue.get(indexBestCombination) == combinationsValue.get(i))
+			{
+				//si la combination est egale, on compare leurs cartes
+				if(cardValue.get(combinationCard.get(indexBestCombination).charAt(0)) < cardValue.get(combinationCard.get(i).charAt(0)))
+				{
+					indexBestCombination = i;
+				}
+			}
+		}
+		//TODO resolve equalities 
+		return indexBestCombination;
+	}
+	
 	public static void main(String[] args) {
 		ArrayList<String> deck = createCards();
 		ArrayList<String> combinationCard = new ArrayList<String>();
 		HashMap<Character, Integer> cardValue = createHash(deck);
 		ArrayList<Integer> combinationsValue = new ArrayList<Integer>();
+		ArrayList<String> combinations = new ArrayList<String>();
+		int winner;
 		deck = shuffleCards(deck);
 		//TODO scanner le nombre de joueurs
 		ArrayList<ArrayList<String>> players = createPlayers(6);
 		dealCards(deck, players);
-		ArrayList<String> combinations = new ArrayList<String>();
+		
 		
 		for (int i = 0; i < players.size(); i++)
 		{
@@ -402,7 +430,8 @@ public class PokerClassique {
 		System.out.println(combinations);
 		System.out.println(combinationCard);
 		System.out.println(combinationsValue);
-		
+		winner = bestCombination(cardValue, combinations, combinationsValue, combinationCard);
+		System.out.println("le gagnant est le joueur numero " + (winner + 1) + " avec une " + combinations.get(winner));
 	}
 
 }
