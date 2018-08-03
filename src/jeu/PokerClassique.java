@@ -313,7 +313,8 @@ public class PokerClassique {
 				}
 				if(nbSame == 2 && testedCardValue == cardValue.get(hand.get(j).charAt(0)))
 				{
-					//si on trouve deux cartes similaires, et comme les cartes sont triee, les premiere sont les plus fortes
+					//si on trouve deux cartes similaires, et comme les cartes sont triee, les premiere sont les plus fortes 
+					//(dans le cas d'une double paire)
 					return hand.get(j);
 				}
 			}
@@ -323,51 +324,60 @@ public class PokerClassique {
 		return "0";
 	}
 	
-	public static String bestCombination(ArrayList<String> hand, HashMap<Character, Integer> cardValue, ArrayList<String> combinationCard)
+	public static String handCombination(ArrayList<String> hand, HashMap<Character, Integer> cardValue, ArrayList<String> combinationCard, ArrayList<Integer> combinationsValue)
 	{
 		if(isQuinteFlush(hand, cardValue))
 		{
 			combinationCard.add(hand.get(0));
+			combinationsValue.add(8);
 			return ("Quinte Flush");
 		}
 		else if(4 == nbSameCards(hand, cardValue))
 		{
 			combinationCard.add(hand.get(2));
+			combinationsValue.add(7);
 			return ("Carre");
 		}
 		else if(isFull(hand, cardValue))
 		{
 			combinationCard.add(hand.get(2));
+			combinationsValue.add(6);
 			return ("Full");
 		}
 		else if(isCouleur(hand))
 		{
 			combinationCard.add(hand.get(0));
+			combinationsValue.add(5);
 			return ("Couleur");
 		}
 		else if(isSuite(hand, cardValue))
 		{
 			combinationCard.add(hand.get(0));
+			combinationsValue.add(4);
 			return ("Suite");
 		}
 		else if(3 == nbSameCards(hand, cardValue))
 		{
 			combinationCard.add(hand.get(2));
+			combinationsValue.add(3);
 			return ("Brelan");
 		}
 		else if(isDoublePair(hand, cardValue))
 		{
 			combinationCard.add(cardPair(hand, cardValue));
+			combinationsValue.add(2);
 			return ("Double Paire");
 		}
 		else if(2 == nbSameCards(hand, cardValue))
 		{
 			combinationCard.add(cardPair(hand, cardValue));
+			combinationsValue.add(1);
 			return ("Paire");
 		}
 		else
 		{
 			combinationCard.add(hand.get(0));
+			combinationsValue.add(0);
 			return hand.get(0);
 		}
 	}
@@ -376,6 +386,7 @@ public class PokerClassique {
 		ArrayList<String> deck = createCards();
 		ArrayList<String> combinationCard = new ArrayList<String>();
 		HashMap<Character, Integer> cardValue = createHash(deck);
+		ArrayList<Integer> combinationsValue = new ArrayList<Integer>();
 		deck = shuffleCards(deck);
 		//TODO scanner le nombre de joueurs
 		ArrayList<ArrayList<String>> players = createPlayers(6);
@@ -385,11 +396,13 @@ public class PokerClassique {
 		for (int i = 0; i < players.size(); i++)
 		{
 			sortHand(players.get(i), cardValue);
-			combinations.add(bestCombination(players.get(i), cardValue, combinationCard));
+			combinations.add(handCombination(players.get(i), cardValue, combinationCard, combinationsValue));
 		}
 		System.out.println(players);
 		System.out.println(combinations);
 		System.out.println(combinationCard);
+		System.out.println(combinationsValue);
+		
 	}
 
 }
